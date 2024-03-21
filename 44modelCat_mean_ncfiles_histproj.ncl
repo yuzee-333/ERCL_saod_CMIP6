@@ -7,8 +7,8 @@
 ;region"
 
 scenario = (/"Hist", "Proj"/)
-;do sce=0, dimsizes(scenario)-1,1
-do sce=0,0,1
+do sce=0, dimsizes(scenario)-1,1
+
 
 models = (/"Cat1", "Cat2"/)
 do cat=0, dimsizes(models)-1,1
@@ -16,13 +16,13 @@ do cat=0, dimsizes(models)-1,1
 
                     ;load in file containing model list in each region are arranged according to category
 if (scenario(sce).eq."Hist") then
- load "names_cat1hist_rev.ncl"
- diriT  = "/mnt/f/uz_msc_research_files/DATA/cmip6/historical/tos/"    ;for sst
- diri   = "/mnt/f/uz_msc_research_files/DATA/cmip6/historical/pr/"     ; for pr
+ load "names_cat1hist.ncl"
+ diriT  = "/home/yuzee/nclfolder/DATA/cmip6/historical/tos/"    ;for sst
+ diri   = "/home/yuzee/nclfolder/DATA/cmip6/historical/pr/"     ; for pr
  yrStrt = 1950
  yrLast = 2014
 else
-  ; load "names_cat1proj.ncl"
+ load "names_cat1proj.ncl"
  diriT  = "/home/yuzee/nclfolder/DATA/cmip6/projection/tos/"    ;for sst
  diri   = "/home/yuzee/nclfolder/DATA/cmip6/projection/pr/"     ; for pr
  yrStrt = 2015
@@ -43,7 +43,7 @@ do cb=0,dimsizes(region)-1,1
 
 ;if (region(cb).eq."Northern_Amazon") then                    ;run script for just 1 region
 
-diro   = "/home/yuzee/RESULTS/model_cat_ncfiles/"
+diro   = "/home/yuzee/nclfolder/RESULTS/07manuscript/model_cat_ncfiles/"
 
 if(models(cat).eq."Cat1") then
   filo   = scenario(sce)+"_Cat1"+var+"_mean_"+region(cb)+"_"+season+".nc"

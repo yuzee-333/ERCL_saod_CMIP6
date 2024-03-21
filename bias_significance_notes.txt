@@ -1,0 +1,125 @@
+Certainly! To indicate where more than a certain number of models agree on the sign of the anomaly in your bias map, you can use stippling or contours. Let's break down how to achieve this in NCL (NCAR Command Language):
+
+1. **Stippling**:
+   - Stippling involves placing dots or markers on your map to highlight regions where the models agree.
+   - You can stipple areas where a majority of models show a consistent positive or negative bias.
+   - Here's how you can do it:
+
+```ncl
+; Assume 'bias_map' is your difference array (a - b)
+; Set a threshold for the number of models agreeing on the sign (e.g., 20 out of 33 models)
+threshold = 20
+
+; Create a binary mask where 1 indicates agreement and 0 indicates disagreement
+agreement_mask = where(abs(bias_map) > 0, 1, 0)
+
+; Count the number of models agreeing at each grid point
+agreement_count = dim_sum(agreement_mask, 0)
+
+; Stipple where the agreement count exceeds the threshold
+stipple_mask = where(agreement_count >= threshold, 1, 0)
+
+; Plot your bias_map with stippling
+res = True
+res@gsnDraw = False
+res@gsnFrame = False
+res@cnFillOn = True
+res@cnFillPalette = "BlueWhiteOrangeRed"i have an array with the ensemble mean rainfall of 33 global climate models (a). the array has the dimensions Lat x Lon. I also have the observations mean rainfall with the same dimensions (b). 
+I have plotted the difference between a and b ; ie bias_map = a - b. 
+
+a reviewer is suggestion this:
+The maps of CMIP6 model bias have no metric of significance on them.  Often stippling or contours are added to show where more than a certain number of models agree on the sign of the anomaly.  Suggest adding that.
+
+how do i do this in NCL? How do i "show where more than a certain number of models agree on the sign of the anomaly."?
+res@cnLinesOn = False
+res@cnInfoLabelOn = False
+res@cnFillMode = "RasterFill"
+res@cnRasterSmoothingOn = True
+res@cnRasterSmoothingDistanceF = 0.02
+res@stMarkerIndex = 16  ; Use a dot marker
+res@stMarkerSizeF = 0.01 ; Adjust the size of the stippling dots
+res@stMarkerColor = "black"
+res@stMonoFillColor = True
+res@stFillColors = (/ (/0, 0, 0, 0/) /) ; Transparent fill color
+res@stFillBackground = True
+res@stFillScaleF = 0.5 ; Adjust the density of stippling
+
+plot = gsn_csm_contour_map(wks, bias_map, res)
+
+; Overlay stippling
+overlay(stipple_mask, plot)
+
+; Add a title and other annotations as needed
+draw(plot)
+frame(wks)
+```
+
+2. **Contours**:
+   - Instead of stippling, you can use contour lines to show regions of agreement.
+   - Contour lines can represent areas where a certain percentage of models agree (e.g., 60% or more).
+   - Here's how to create contour lines:
+
+```ncl
+; Assume 'bias_map' is your difference array (a - b)
+; Set a threshold for the percentage of models agreeing (e.g., 60%)
+percentage_threshold = 60
+
+; Calculate the percentage of models agreeing at each grid point
+agreement_percentage = (agreement_count / 33) * 100
+
+; Create a contour plot of the bias_map
+res_contour = True
+res_contour@gsnDraw = False
+res_contour@gsnFrame = False
+res_contour@cnFillOn = False
+res_contour@cnLinesOn = True
+res_contour@cnLineLabelsOn = True
+res_contour@cnLevelSelectionMode = "ManualLevels"
+res_contour@cnMinLevelValF = -100
+res_contour@cnMaxLevelValF = 100
+res_contour@cnLevelSpacingF = 10
+res_contour@cnLineThicknessF = 2
+res_contour@cnLineDashPattern = 1
+
+plot_contour = gsn_csm_contour_map(wks, bias_map, res_contour)
+
+; Overlay contour lines where the agreement percentage exceeds the threshold
+overlay(agreement_percentage, plot_contour)
+
+; Add a title and other annotations as needed
+draw(plot_contour)
+frame(wks)
+```
+
+Remember to adjust the parameters (such as threshold, marker size, color, etc.) according to your specific data and preferences. These examples demonstrate how to visually represent model agreement on your bias map. Feel free to customize them further to suit your needs! 🌦️🗺️
+
+Source: Conversation with Bing, 20/03/2024
+(1) NCL Graphics: Taylor Diagrams. https://www.ncl.ucar.edu/Applications/taylor.shtml.
+(2) taylor_stats - NCAR Command Language (NCL). https://www.ncl.ucar.edu/Document/Functions/Contributed/taylor_stats.shtml.
+(3) ttest - NCAR Command Language (NCL). https://www.ncl.ucar.edu/Document/Functions/Built-in/ttest.shtml.
+
+
+;==========================================================================================================================================
+
+
+Certainly! To create 50 bootstrapped means with the same Lat x Lon dimensions as your original `obs_prc_ann`, you can modify the code snippet as follows:
+
+```ncl
+; Assume 'obs_prc_ann' is your annual rainfall mean
+n_bootstrap = 50  ; Number of bootstrap iterations
+
+; Initialize an array to store bootstrapped means
+bootstrap_means = new((/n_bootstrap, dimsizes(obs_prc_ann)(/:0/)/), float)
+
+; Perform bootstrapping
+do i = 0, n_bootstrap-1
+    indices = generate_sample_indices(dimsizes(obs_prc_ann), npts=dim_size(obs_prc_ann))
+    bootstrap_sample = obs_prc_ann(indices)
+    bootstrap_means(i,:) = dim_avg_n_Wrap(bootstrap_sample, 0)
+end do
+
+; 'bootstrap_means' now contains 50 bootstrapped means with Lat x Lon dimensions
+printMinMax(bootstrap_means, True)
+```
+
+In this modified version, the `bootstrap_means` array has dimensions `(50, Lat, Lon)`, where each slice along the first dimension corresponds to a bootstrapped mean. Adjust the code according to your specific requirements, and feel free to explore further analyses using these bootstrapped means! 🌧️📊

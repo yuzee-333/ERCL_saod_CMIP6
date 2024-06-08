@@ -5,7 +5,7 @@ Created on Sat Sep  9 03:35:33 2023
 
 @author: yuzee
 
-for generating Fig.4 in ERCL Manuscript
+for generating Fig.5 in ERCL Manuscript
 """
 
 import os

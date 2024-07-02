@@ -755,7 +755,7 @@ plotS = new(nplots,graphic)
     res@mpMaxLonF              = lonRp
     res@gsnLeftStringFontHeightF  = 0.03
   else
-    res@mpMinLatF              = -90        ; zoom in on map
+    res@mpMinLatF              = -90        ; zoom out on map
     res@mpMaxLatF              =  90
     res@mpMinLonF              = -180
     res@mpMaxLonF              =  180

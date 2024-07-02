@@ -543,6 +543,7 @@ printMinMax(imodel_bias_pr, True)
 printVarSummary(pr_nc)
 printMinMax(pr_nc, True)
 
+                    ;finding the number of models with same sign bias at each grid point for Pr
 pos_mask_pr = where(imodel_bias_pr.gt.0,imodel_bias_pr,0)        ;/model x lat x lon/
 neg_mask_pr = where(imodel_bias_pr.lt.0,imodel_bias_pr,0)
 aa_pr       = dim_num_n(pos_mask_pr.ne.0, 0)                     ;/lat x lon/
@@ -568,7 +569,7 @@ copy_VarCoords(pr_nc(0,:,:), pr_filt(0,:,:))
 ;pr_filt!0 = "nobs"
 ;pr_filt&nobs = nobs 
 printVarSummary(pr_filtt)
-printMinMax(pr_filtt, True)
+printMinMax(pr_filtt, True)            ;Pr bias map for each model
 ;print(aa_pr)
 
 
@@ -600,11 +601,11 @@ printVarSummary(imodel_bias_sst)
   delete(im)
 copy_VarCoords(sst_nc, imodel_bias_sst)
 printVarSummary(imodel_bias_sst)
-printMinMax(imodel_bias_sst, True)
+printMinMax(imodel_bias_sst, True)          ;SST bias map for each model
 
 printVarSummary(sst_nc)
 printMinMax(sst_nc, True)
-
+                     ;finding the number of models with same sign bias at each grid point for SST
 pos_mask_sst = where(imodel_bias_sst.gt.0,imodel_bias_sst,0)
 neg_mask_sst = where(imodel_bias_sst.lt.0,imodel_bias_sst,0)
 aa_sst       = dim_num_n(pos_mask_sst.ne.0, 0)
@@ -813,21 +814,8 @@ plotS = new(nplots,graphic)
    ;   res@gsnLeftStringFontHeightF  = 0.1
       res@gsnRightString = scenario(sce)+"_"+season
       res@cnFillPalette  = "BlWhRe"; "posneg_1" ;"BlWhRe" ;"MPL_coolwarm" ;"GMT_haxby" ;"GMT_wysiwyg" ;"MPL_gist_rainbow"  ;"temp1"
-      ;plot(0)=gsn_csm_contour_map(wks,dif_sst,res)   ;mean correlation plot for observations
       plot(0)=gsn_csm_contour_map_overlay(wks,dif_sst,sst_filtt,res,sig_res)
-      ;plot(0)= gsn_csm_contour_map_overlay(wks,dif_sst,sst_filt(0,:,:),res,sig_res)
-      ;plotq1 =  gsn_csm_contour(wks,sst_filt(1,:,:),sig_res)
-      ;plotS(0) = gsn_contour_shade(plotS(0),threshold,)
-      ;overlay(plot(0),plotS(0))
-      ;overlay(plot(0),plotq1)
-      ;plot(0) = plot(0)
-
-      ;res@gsnLeftString  = "[c] Access_ESM - Obs (SST ~S~o~N~C )"
-      ;plot(2)=gsn_csm_contour_map(wks,diff_sst_best,res)   ;mean correlation plot for observations
-
-;      res@gsnLeftString  = "[e] a - c"
-;      plot(4)=gsn_csm_contour_map(wks,diff_2sst,res)   ;mean correlation plot for observations
-
+    
 
 ;---------------------pr plot ------------------------------------------------
 
@@ -839,38 +827,13 @@ plotS = new(nplots,graphic)
      res@gsnLeftString  = "[b] Cmip6 - Obs (rainfall mm/day)"
   ;   res@gsnLeftStringFontHeightF  = 0.1
      res@gsnRightString = scenario(sce)+"_"+season
-     res@cnFillPalette  = "BlWhRe" ;"posneg_1" ;"GMT_drywet" ;"GMT_haxby" ;"GMT_wysiwyg" ;"MPL_gist_rainbow"  ;"temp1"
-     ;plot(1)=gsn_csm_contour_map(wks,diff_pr,res)        ;mean correlation plot for observations
+     res@cnFillPalette  = "BlWhRe" ;"posneg_1" ;"GMT_drywet" ;"GMT_haxby" ;"GMT_wysiwyg" ;"MPL_gist_rainbow"  ;"temp1
      plot(1)=gsn_csm_contour_map_overlay(wks,diff_pr,pr_filtt,res,sig_res)
-     ;plot(1)=gsn_csm_contour_map_overlay(wks,diff_pr,pr_filt(0,:,:),res,sig_res)
-     ;plotq2 =gsn_csm_contour(wks,pr_filt(1,:,:),sig_res)
-    ;overlay(plot(1),plotS(1))
-     ;overlay(plot(1),plotq2)
-     ;plot(1) = plot(1)
-
-     ;res@gsnLeftString  = "[d] Access_ESM - Obs (rainfall mm/day)"
-     ;plot(3)=gsn_csm_contour_map(wks,diff_pr_best,res)   ;mean correlation plot for observations
-
-;     res@gsnLeftString  = "[f] b - d"
-;     plot(5)=gsn_csm_contour_map(wks,diff_2pr,res)        ;mean correlation plot for observations
-
+     
 
 end do                ;end nplots loop 
 
-;if(ZOOM(zz).eq.0) then
-;    a = gsn_add_text(wks,plot(0),"[a]",-160,80,tres)
-;    b = gsn_add_text(wks,plot(1),"[b]",-160,80,tres)
-;    c = gsn_add_text(wks,plot(2),"[c]",-160,80,tres)
-;    d = gsn_add_text(wks,plot(3),"[d]",-160,80,tres)
-;else
-;     a = gsn_add_text(wks,plot(0),"[a]",-71,27,tres)
-;     b = gsn_add_text(wks,plot(1),"[b]",-71,27,tres)
-;     c = gsn_add_text(wks,plot(2),"[c]",-71,27,tres)
-;     d = gsn_add_text(wks,plot(3),"[d]",-71,27,tres)
-; end if
 
-                                        ; now draw all as one plot
-;gsn_panel(wks,plot,(/1,2/),resP)     ;draw horizontal - 1 row, 2 columns
 gsn_panel(wks,plot,(/2,1/),resP)        ;draw vertical    - 2 rows, 1 column
 
     end do                                           ;end plot type loop

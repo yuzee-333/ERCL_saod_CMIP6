@@ -24,10 +24,8 @@ YYYY   = cd_calendar(TIME,-1)/100                 ; entire file
 iYYYY  = ind(YYYY.ge.yrStrt .and. YYYY.le.yrLast)
 GSST   = f->$varT$(iYYYY,:,:)
 
-delete(f)
-delete(TIME)
-delete(YYYY)
-delete(iYYYY)
+delete([/f,TIME,YYYY,iYYYY/])
+
 GSST = lonFlip(GSST)
 
 sst_clm   = clmMonTLL(GSST)                            ; compute monthly climatology
@@ -35,10 +33,8 @@ sst_clm   = where(sst_clm.lt.0.10, 0.0, sst_clm)      ; set small values to 0.0
 sst_ann2  = month_to_season(sst_clm,season)
 sst_ann   = dim_avg_n_Wrap(sst_ann2, 0)               ; compute annual mean ;(arithmetic);
 
-delete(sst_clm)
-delete(sst_ann2)
-delete(GSST)
-delete(diriT)
+delete([/sst_clm, sst_ann2,GSST,diriT/])
+
 print("------------------sst_ann generated-----------==========================-")
 
 diriT   = "/home/yuzee/mywork/DATA/cmip6/historical/pr/"
@@ -48,10 +44,8 @@ YYYY   = cd_calendar(TIME,-1)/100                 ; entire file
 iYYYY  = ind(YYYY.ge.yrStrt .and. YYYY.le.yrLast)
 PRC    = f->$var$(iYYYY,:,:)
 
-delete(f)
-delete(TIME)
-delete(YYYY)
-delete(iYYYY)
+delete([/f,TIME,YYYY,iYYYY/])
+
 PRC = lonFlip(PRC)
 
 prc_clm = clmMonTLL(PRC)                            ; compute monthly climatology
@@ -59,10 +53,8 @@ prc_clm  = where(prc_clm.lt.0.10, 0.0, prc_clm)      ; set small values to 0.0
 prc_ann2  = month_to_season(prc_clm,season)
 prc_ann  = dim_avg_n_Wrap(prc_ann2, 0)               ; compute annual mean ;(arithmetic);
 
-delete(prc_clm)
-delete(prc_ann2)
-delete(PRC)
-delete(diriT)
+delete([/prc_clm,prc_ann2,PRC,diriT/])
+
 print("------------------prc_ann generated-----------==========================-")
 
 ;-------------------======================================-----------------
@@ -89,9 +81,8 @@ obsdiro = "/home/yuzee/mywork/DATA/obs/"
  ;printVarSummary(oPRC)       ; variable overview
  ;printMinMax(oPRC,True)
 
- delete(TIME)
- delete(YYYY)
- delete(iYYYY)
+ delete([/TIME,YYYY,iYYYY/])
+ 
  oPRC = lonFlip(oPRC)
 
  ;------------ RAINFALL annual mean ----------------------------------
@@ -110,9 +101,8 @@ obsdiro = "/home/yuzee/mywork/DATA/obs/"
  ;printVarSummary(obs_prc_ann)                          ; from monthly climatologies
  ;printMinMax(obs_prc_ann, True)
 
- delete(oPRC)
- delete(prc_clm)
- delete(prc_ann2)
+ delete([/oPRC, prc_clm, prc_ann2/])
+ 
 
  ;----------------Obs SST ------------------------------------------------------
  ;----------------Sea Surface Temperature --------------------------------------
@@ -127,9 +117,8 @@ obsdiro = "/home/yuzee/mywork/DATA/obs/"
  ;printVarSummary(oGSST)       ; variable overview
  ;printMinMax(oGSST,True)
 
- delete(TIME)
- delete(YYYY)
- delete(iYYYY)
+delete([/TIME,YYYY,iYYYY/])
+
 
  sst_clm = clmMonTLL(oGSST)                            ; compute monthly climatology
  ;printVarSummary(sst_clm)                             ; (12,lat,lon)
@@ -373,18 +362,8 @@ printVarSummary(sst_filtt)
 printMinMax(sst_filtt, True)
 
 
-delete(cat_bias_pr)
-delete(cat_bias_sst)
-delete(aa_pr)
-delete(aa_pr_filt)
-delete(aa_sst)
-delete(aa_sst_filt)
-delete(nn_pr)
-delete(nn_pr_filt)
-delete(nn_sst)
-delete(nn_sst_filt)
-delete(sst_filt)
-delete(pr_filt)
+delete([/cat_bias_pr, cat_bias_sst, aa_pr, aa_pr_filt, aa_sst, aa_sst_filt,nn_pr, nn_pr_filt, nn_sst, nn_sst_filt,sst_filt,pr_filt/])
+
 
 
 end if                               ;end PLOTNOBS plot
